@@ -14,7 +14,7 @@ images:
 
 
 dags:
-gitSync:
+ gitSync:
     enabled: true
 
     # git repo clone url
@@ -31,4 +31,4 @@ gitSync:
     # subpath within the repo where dags are located
     # should be "" if dags are at repo root
     subPath: "dags"
-    credentialSecret: git-credentials
+    credentialsSecret: git-credentials
