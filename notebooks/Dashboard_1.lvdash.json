@@ -1,0 +1,130 @@
+{
+  "datasets": [
+    {
+      "name": "9f071341",
+      "displayName": "marts_posts_users",
+      "queryLines": [
+        "SELECT * FROM workspace_1.default.marts_posts_users"
+      ]
+    },
+    {
+      "name": "82e17c97",
+      "displayName": "marts_top_tags",
+      "queryLines": [
+        "SELECT * FROM workspace_1.default.marts_top_tags limit 10"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "name": "0c553cb8",
+      "displayName": "posts_users",
+      "layout": [
+        {
+          "widget": {
+            "name": "ec1ef144",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "9f071341",
+                  "fields": [
+                    {
+                      "name": "monthly(PostCreationDate)",
+                      "expression": "DATE_TRUNC(\"MONTH\", `PostCreationDate`)"
+                    },
+                    {
+                      "name": "sum(PostId)",
+                      "expression": "SUM(`PostId`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "monthly(PostCreationDate)",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(PostId)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 5,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "274e5aa0",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "82e17c97",
+                  "fields": [
+                    {
+                      "name": "tag_exploded",
+                      "expression": "`tag_exploded`"
+                    },
+                    {
+                      "name": "sum(tags_count)",
+                      "expression": "SUM(`tags_count`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "tag_exploded",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(tags_count)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 0,
+            "width": 6,
+            "height": 8
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+    },
+    "applyModeEnabled": false
+  }
+}
