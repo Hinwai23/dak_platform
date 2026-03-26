@@ -10,10 +10,11 @@ helm show values apache-airflow/airflow > chart/values-example.yaml
 # Export values for Airflow docker image
 # Export values for Airflow docker image
 export REGION=us-west-1
-export ECR_REGISTRY=430197276879.dkr.ecr.us-east-1.amazonaws.com
-export ECR_REPO=my-dags
+export ECR_REGISTRY=839581577482.dkr.ecr.us-west-1.amazonaws.com/dags-repo
+export ECR_REPO=dags-repo
 export NAMESPACE=airflow
 export RELEASE_NAME=airflow
+
 
 
 # Authenticate with ECR
@@ -21,15 +22,14 @@ aws ecr get-login-password --region $REGION \
     | docker login --username AWS --password-stdin $ECR_REGISTRY
 
 # Get the latest image tag from ECR
-export IMAGE_TAG=$(aws ecr list-images --repository-name my-dags --region us-east-1 --query 'imageIds[*].imageTag' --output text | tr '\t' '\n' | sort -r | head -n 1)
+export IMAGE_TAG=$(aws ecr list-images --repository-name dags-repo --region us-west-1 --query 'imageIds[*].imageTag' --output text | tr '\t' '\n' | sort -r | head -n 1)
 
 # Build the image and load it into kind
-# docker build --pull --tag $IMAGE_NAME:$IMAGE_TAG -f cicd/Dockerfile .
 
-docker pull apache/airflow:3.1.8-python3.11
-docker build --tag $IMAGE_NAME:$IMAGE_TAG -f cicd/Dockerfile .
+docker pull $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
+kind load docker-image $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
 
-kind load docker-image $IMAGE_NAME:$IMAGE_TAG
+
 
 # Create a namespace
 kubectl create namespace $NAMESPACE
@@ -44,6 +44,7 @@ kubectl apply -f k8s/volumes/airflow-logs-pvc.yaml
 # Install Airflow using Helm
 helm install $RELEASE_NAME apache-airflow/airflow \
     --namespace $NAMESPACE -f chart/values-override-persistence.yaml \
+    --set-string images.airflow.repository=$ECR_REGISTRY/$ECR_REPO \
     --set-string images.airflow.tag="$IMAGE_TAG" \
     --debug
 
