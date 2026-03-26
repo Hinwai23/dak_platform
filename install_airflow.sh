@@ -9,12 +9,16 @@ helm show values apache-airflow/airflow > chart/values-example.yaml
 
 # Export values for Airflow docker image
 export IMAGE_NAME=my-dags
-export IMAGE_TAG=$(date +%Y%m%d%H%M%S)
+export IMAGE_TAG=0.0.1
 export NAMESPACE=airflow
 export RELEASE_NAME=airflow
 
 # Build the image and load it into kind
-docker build --pull --tag $IMAGE_NAME:$IMAGE_TAG -f cicd/Dockerfile .
+# docker build --pull --tag $IMAGE_NAME:$IMAGE_TAG -f cicd/Dockerfile .
+
+docker pull apache/airflow:3.1.8-python3.11
+docker build --tag $IMAGE_NAME:$IMAGE_TAG -f cicd/Dockerfile .
+
 kind load docker-image $IMAGE_NAME:$IMAGE_TAG
 
 # Create a namespace
