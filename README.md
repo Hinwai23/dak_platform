@@ -1,11 +1,11 @@
-# DAK Platform：基于本地 Airflow + Databricks 的数据平台
+# 基于 Airflow + Databricks 的本地数据平台
 
 技术栈：
 
-- **Airflow（本地 Kubernetes 部署）**：负责编排、调度、依赖管理
-- **Databricks Notebooks/Workflows**：负责计算与数据建模
+- **Airflow**：负责编排、调度、依赖管理
+- **Databricks**：负责计算与数据建模
 - **AWS S3**：作为原始数据落地层
-- **Medallion 分层**：`raw -> stg -> marts`
+- **Medallion**：分层建模
 
 
 
@@ -187,6 +187,34 @@ kubectl port-forward svc/airflow-api-server 8080:8080 --namespace airflow
 
 ---
 
+
+To generate your secrets for git sync, use base64 encoding, i.e.
+
+“”“
+echo -n 'your_github_classic_token_here' | base64
+echo -n 'your_github_username_token_here' | base64
+apiVersion: v1
+kind: Secret
+metadata:
+  name: git-credentials
+  namespace: airflow
+data:
+  GITSYNC_USERNAME: <base64 encoded user name here>
+  GITSYNC_PASSWORD: <base64 encoded Git classic token here>
+  GIT_SYNC_USERNAME: <base64 encoded user name here>
+  GIT_SYNC_PASSWORD: <base64 encoded Git classic token here>
+”“”
+
+To enable CI/CD using github actions, set these two secret environment variables in your console:
+“”“
+---
+- name: Configure AWS Creds
+  uses: aws-actions/configure-aws-credentials@v2
+  with:
+    aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    aws-region: us-east-1
+”“”
 
 
 ## 8）运维
