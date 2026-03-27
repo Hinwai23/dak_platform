@@ -190,9 +190,12 @@ kubectl port-forward svc/airflow-api-server 8080:8080 --namespace airflow
 
 To generate your secrets for git sync, use base64 encoding, i.e.
 
-‘’‘
+```bash
 echo -n 'your_github_classic_token_here' | base64
 echo -n 'your_github_username_token_here' | base64
+```
+
+```yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -203,18 +206,19 @@ data:
   GITSYNC_PASSWORD: <base64 encoded Git classic token here>
   GIT_SYNC_USERNAME: <base64 encoded user name here>
   GIT_SYNC_PASSWORD: <base64 encoded Git classic token here>
-’‘’
+```
 
 To enable CI/CD using github actions, set these two secret environment variables in your console:
 
-’‘’ ---
+```yaml
+---
 - name: Configure AWS Creds
   uses: aws-actions/configure-aws-credentials@v2
   with:
     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     aws-region: us-east-1
-’‘’
+```
 
 
 ## 8）运维
